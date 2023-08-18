@@ -66,9 +66,9 @@ module.exports = {
     //
     development: {
       host: "127.0.0.1",
-      port: 9545, // Ensure this matches the port Ganache is running on
-      network_id: 5777, // Match any network id
-      gas: 6721975, // This is the block gas limit. Adjust if necessary.
+      port: 8545, // Ensure this matches the port Ganache is running on
+      network_id: "*", // Match any network id
+      gas: 100000, // This is the block gas limit. Adjust if necessary.
     },
     //
     // An additional network, but with some advanced options…
@@ -107,7 +107,7 @@ module.exports = {
   // Configure your compilers
   compilers: {
     solc: {
-      version: "0.8.19",
+      version: "^0.8.21",
       settings: {
         optimizer: {
           enabled: true,

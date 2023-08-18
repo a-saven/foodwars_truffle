@@ -5,7 +5,7 @@ import { WalletConnection, Dashboard, VoteForm, CandidateList } from "./voting";
 import { reducer, initialState } from "./voting/state";
 import { useWeb3Initialization } from "./voting/hookWeb3";
 
-const CONTRACT_ADDRESS = "0x0cB8A313C7f9D8bc312dA8051D88e6432b5AD9B2";
+const CONTRACT_ADDRESS = "0x961359d6a9876020b7e4EceEd92A1875E596B2E3";
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -14,41 +14,61 @@ function App() {
 
   const connect = async () => {
     if (web3) {
-      const accounts = await web3.eth.requestAccounts();
-      dispatch({ type: "SET_ACCOUNTS", payload: accounts });
+      try {
+        const accounts = await web3.eth.requestAccounts();
+        dispatch({ type: "SET_ACCOUNTS", payload: accounts });
 
-      const contractInstance = new web3.eth.Contract(votingAbi.abi, CONTRACT_ADDRESS);
-      dispatch({ type: "SET_VOTING_CONTRACT", payload: contractInstance });
+        const contractInstance = new web3.eth.Contract(votingAbi.abi, CONTRACT_ADDRESS);
+        dispatch({ type: "SET_VOTING_CONTRACT", payload: contractInstance });
+      } catch (error) {
+        console.error("Error while connecting:", error);
+      }
     }
   };
 
   useEffect(() => {
     const fetchData = async () => {
       if (state.votingContract) {
-        const round = await state.votingContract.methods.currentRound().call();
-        dispatch({ type: "SET_CURRENT_ROUND", payload: round });
-
-        const balance = await web3.eth.getBalance(state.accounts[0]);
-        dispatch({ type: "SET_USER_BALANCE", payload: web3.utils.fromWei(balance, "ether") });
-
-        const history = [];
-        for (let i = 1; i <= state.currentRound; i++) {
-          const hasVoted = await state.votingContract.methods.voterRounds(state.accounts[0], i).call();
-          if (hasVoted) history.push(i);
+        try {
+          const round = await state.votingContract.methods.currentRound().call();
+          dispatch({ type: "SET_CURRENT_ROUND", payload: round });
+        } catch (error) {
+          console.error("Error fetching current round:", error);
         }
-        dispatch({ type: "SET_VOTING_HISTORY", payload: history });
 
-        const count = await state.votingContract.methods.candidatesCount().call();
-        const candidatesList = [];
-        for (let i = 0; i < count; i++) {
-          const candidate = await state.votingContract.methods.candidates(i).call();
-          candidatesList.push({
-            id: i,
-            name: candidate.name,
-            voteCount: parseInt(candidate.voteCount),
-          });
+        try {
+          const balance = await web3.eth.getBalance(state.accounts[0]);
+          dispatch({ type: "SET_USER_BALANCE", payload: web3.utils.fromWei(balance, "ether") });
+        } catch (error) {
+          console.error("Error fetching balance:", error);
         }
-        dispatch({ type: "SET_CANDIDATES", payload: candidatesList });
+
+        try {
+          const history = [];
+          for (let i = 1; i <= state.currentRound; i++) {
+            const hasVoted = await state.votingContract.methods.voterRounds(state.accounts[0], i).call();
+            if (hasVoted) history.push(i);
+          }
+          dispatch({ type: "SET_VOTING_HISTORY", payload: history });
+        } catch (error) {
+          console.error("Error fetching voting history:", error);
+        }
+
+        try {
+          const count = await state.votingContract.methods.candidatesCount().call();
+          const candidatesList = [];
+          for (let i = 0; i < count; i++) {
+            const candidate = await state.votingContract.methods.candidates(i).call();
+            candidatesList.push({
+              id: i,
+              name: candidate.name,
+              voteCount: parseInt(candidate.voteCount),
+            });
+          }
+          dispatch({ type: "SET_CANDIDATES", payload: candidatesList });
+        } catch (error) {
+          console.error("Error fetching candidates:", error);
+        }
       }
     };
     fetchData();
