@@ -1,10 +1,11 @@
+"use client";
 import React, { useReducer, useEffect } from "react";
-import votingAbi from "./contracts/voting.json";
+import votingAbi from "@/build/contracts/Voting.json";
 import { WalletConnection, Dashboard, VoteForm, CandidateList } from "./voting";
 import { reducer, initialState } from "./voting/state";
 import { useWeb3Initialization } from "./voting/hookWeb3";
 
-const CONTRACT_ADDRESS = "0xef61287b986d2d5c0c743fa7324b32473601d226";
+const CONTRACT_ADDRESS = "0x0cB8A313C7f9D8bc312dA8051D88e6432b5AD9B2";
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);

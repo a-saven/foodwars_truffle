@@ -66,7 +66,7 @@ module.exports = {
     //
     development: {
       host: "127.0.0.1",
-      port: 7545, // Ensure this matches the port Ganache is running on
+      port: 9545, // Ensure this matches the port Ganache is running on
       network_id: 5777, // Match any network id
       gas: 6721975, // This is the block gas limit. Adjust if necessary.
     },
