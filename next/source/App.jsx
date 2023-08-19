@@ -1,7 +1,7 @@
 "use client";
 import React, { useReducer, useEffect } from "react";
 //import votingAbi from "@/build/contracts/Voting.json";
-import { Contract } from "ethers";
+import { Contract, formatEther } from "ethers";
 import { WalletConnection, Dashboard, VoteForm, CandidateList } from "./voting";
 import { reducer, initialState } from "./voting/state";
 import { useEthers } from "./voting/hookEthers";
@@ -14,18 +14,14 @@ const CONTRACT_ABI = Voting.abi;
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const ethers = useEthers();
-  const isConnected = state.accounts && state.accounts.length > 0;
+  const isConnected = state.accounts && state.accounts.address ? true : false;
 
   const connect = async () => {
     if (ethers) {
-      console.log("Ethers:", ethers);
       try {
         const signer = await ethers.getSigner();
-        console.log("Signer:", signer);
-        //const accounts = await ethers.request({ method: "eth_requestAccounts" });
-        //dispatch({ type: "SET_ACCOUNTS", payload: accounts });
-
-        const contractInstance = new Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer.address);
+        dispatch({ type: "SET_ACCOUNTS", payload: signer });
+        const contractInstance = new Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
         dispatch({ type: "SET_VOTING_CONTRACT", payload: contractInstance });
       } catch (error) {
         console.error("Error while connecting:", error);
@@ -34,6 +30,7 @@ function App() {
   };
 
   useEffect(() => {
+    console.log("state", state);
     const fetchData = async () => {
       if (state.votingContract) {
         try {
@@ -42,25 +39,23 @@ function App() {
         } catch (error) {
           console.error("Error fetching current round:", error);
         }
-
         try {
-          const balance = await ethers.eth.getBalance(state.accounts[0]);
-          dispatch({ type: "SET_USER_BALANCE", payload: ethers.utils.fromWei(balance, "ether") });
+          const balance = await state.accounts.provider.getBalance(state.accounts.address);
+          const formattedBalance = formatEther(balance);
+          dispatch({ type: "SET_USER_BALANCE", payload: formattedBalance });
         } catch (error) {
           console.error("Error fetching balance:", error);
         }
-
         try {
           const history = [];
           for (let i = 1; i <= state.currentRound; i++) {
-            const hasVoted = await state.votingContract.voterRounds(state.accounts[0], i);
+            const hasVoted = await state.votingContract.voterRounds(state.accounts.address, 1);
             if (hasVoted) history.push(i);
           }
           dispatch({ type: "SET_VOTING_HISTORY", payload: history });
         } catch (error) {
           console.error("Error fetching voting history:", error);
         }
-
         try {
           const count = await state.votingContract.candidatesCount();
           const candidatesList = [];
@@ -79,12 +74,14 @@ function App() {
       }
     };
     fetchData();
-  }, [state.votingContract, state.accounts, state.currentRound, ethers]);
+  }, [state.votingContract, state.currentRound]);
 
   const handleVote = async () => {
-    if (state.votingContract && state.accounts.length > 0) {
+    if (state.votingContract && state.accounts.address) {
       try {
-        await state.votingContract.methods.vote(1).send({ from: state.accounts[0] });
+        console.log("selectedCandidate", state.selectedCandidate);
+        const tx = await state.votingContract.vote(state.selectedCandidate);
+        await tx.wait();
         alert("Vote successful");
       } catch (error) {
         console.error("Error while voting:", error);
@@ -93,9 +90,10 @@ function App() {
   };
 
   const startNewRound = async () => {
-    if (state.votingContract && state.accounts.length > 0) {
+    if (state.votingContract && state.accounts.address) {
       try {
-        await state.votingContract.methods.startNewVotingRound().send({ from: state.accounts[0] });
+        const tx = await state.votingContract.startNewVotingRound();
+        await tx.wait();
         alert("New voting round started!");
       } catch (error) {
         console.error("Error while starting a new round:", error);
