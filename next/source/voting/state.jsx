@@ -1,5 +1,3 @@
-import { useState, useEffect } from "react";
-
 export const initialState = {
   web3: null,
   accounts: [],
