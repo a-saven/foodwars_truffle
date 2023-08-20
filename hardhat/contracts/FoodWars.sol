@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract RestaurantRanks {
+contract FoodWars {
     struct Restaurant {
         string name;
         string identifier; // This will store values like "642a8b19d767d2274c542c96"
