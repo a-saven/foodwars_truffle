@@ -2,7 +2,8 @@ import { Contract } from "ethers";
 import { initializeEthers } from "@/source/utils/initializeEthers";
 import FoodWars from "@/contracts/FoodWars.json";
 import CA from "@/contracts/contractAddress.json";
-import { ethers, formatEther } from "ethers";
+import { BigNumberish, formatEther } from "ethers";
+import { Tip } from "@/source/components/tip";
 
 const CONTRACT_ADDRESS: string = CA.address;
 const CONTRACT_ABI: any[] = FoodWars.abi;
@@ -11,29 +12,41 @@ interface Restaurant {
   name: string;
   identifier: string;
   owner: string;
-  totalTips: ethers.BigNumberish;
+  totalTips: BigInt;
 }
 
-async function fetchRatings(): Promise<Restaurant[]> {
+interface IndexedRestaurant extends Restaurant {
+  id: number;
+}
+
+async function fetchRatings(): Promise<IndexedRestaurant[]> {
   const { provider } = await initializeEthers();
   const contractInstance = new Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
-  const count: ethers.BigNumberish = await contractInstance.restaurantsCount();
+  const count: BigInt = await contractInstance.restaurantsCount();
   const numberCount: number = Number(count);
 
-  const fetchedRestaurants: Restaurant[] = [];
+  const fetchedRestaurants: IndexedRestaurant[] = [];
   for (let i = 1; i <= numberCount; i++) {
     const restaurant: Restaurant = await contractInstance.restaurants(i);
-    fetchedRestaurants.push(restaurant);
+    console.log("restaurants", restaurant);
+
+    fetchedRestaurants.push({
+      id: i, // This is the restaurant's ID
+      name: restaurant.name,
+      identifier: restaurant.identifier,
+      owner: restaurant.owner,
+      totalTips: restaurant.totalTips,
+    });
   }
 
   // Sort by tips in descending order
-  fetchedRestaurants.sort((a, b) => Number(BigInt(b.totalTips) - BigInt(a.totalTips)));
-
+  //fetchedRestaurants.sort((a, b) => Number(b.totalTips) - Number(a.totalTips));
+  console.log("fetchedRestaurants", fetchedRestaurants);
   return fetchedRestaurants;
 }
 
 export async function Table() {
-  const restaurants: Restaurant[] = await fetchRatings();
+  const restaurants: IndexedRestaurant[] = await fetchRatings();
 
   return (
     <div>
@@ -43,7 +56,8 @@ export async function Table() {
           <tr>
             <th>Name</th>
             <th>Identifier</th>
-            <th>Total Tips</th>
+            <th>Total</th>
+            <th>Tip</th>
           </tr>
         </thead>
         <tbody>
@@ -52,7 +66,10 @@ export async function Table() {
               <tr key={index}>
                 <td>{restaurant.name}</td>
                 <td>{restaurant.identifier}</td>
-                <td>{formatEther(restaurant.totalTips)}</td>
+                <td>{formatEther(restaurant.totalTips as BigNumberish)}</td>
+                <td>
+                  <Tip restaurantId={restaurant.id} />
+                </td>
               </tr>
             ))}
         </tbody>
