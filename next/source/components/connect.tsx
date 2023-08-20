@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useEthers } from "@/source/utils/hook"; // Adjust the path accordingly
+import { Actions } from "@/source/components/actions";
 
 export function Connect() {
   const { provider, signer, loading, error } = useEthers();
@@ -18,7 +19,7 @@ export function Connect() {
       console.error("Error connecting to MetaMask:", err);
     }
   };
-
+  console.log("signer", signer);
   const logout = () => {
     setUserAddress(null);
   };
@@ -47,7 +48,7 @@ export function Connect() {
           <button onClick={logout} className="bg-red-500 text-white p-2 rounded-md">
             Logout
           </button>
-          {/* Here you can add the logic and UI for adding a restaurant and tipping */}
+          <Actions signer={signer} userAddress={userAddress} />
         </div>
       )}
     </div>
