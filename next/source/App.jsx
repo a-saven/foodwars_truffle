@@ -10,7 +10,7 @@ import CA from "@/contracts/contractAddress.json";
 
 const CONTRACT_ADDRESS = CA.address;
 const CONTRACT_ABI = Voting.abi;
-
+console.log("CONTRACT_ADDRESS", CONTRACT_ADDRESS);
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const ethers = useEthers();
@@ -30,7 +30,7 @@ function App() {
   };
 
   useEffect(() => {
-    console.log("state", state);
+    console.log("Rerender____>", state);
     const fetchData = async () => {
       if (state.votingContract) {
         try {

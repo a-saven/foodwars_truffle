@@ -15,6 +15,9 @@ contract Voting {
 
     // Event to log the start of a new voting round
     event NewVotingRoundStarted(uint indexed round);
+
+    // Event to log unrecognized function calls
+    event UnrecognizedFunctionCall(bytes4 selector);
     
     mapping(address => mapping(uint => bool)) public voterRounds; // To track which rounds a voter has voted in
     mapping(uint => Candidate) public candidates;
@@ -48,6 +51,11 @@ contract Voting {
             candidates[i].voteCount = 0; // Reset vote count for each candidate
         }
         emit NewVotingRoundStarted(currentRound);
+    }
+
+      // Fallback function to catch and log unrecognized function calls
+    fallback() external {
+        emit UnrecognizedFunctionCall(msg.sig);
     }
 }
 

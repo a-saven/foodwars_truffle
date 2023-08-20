@@ -2,10 +2,9 @@ import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { TaskArguments } from "hardhat/types";
-const fs = require("fs");
-const path = require("path");
-const { task } = require("hardhat/config");
-
+import fs from "fs";
+import path from "path";
+import { task } from "hardhat/config";
 const config: HardhatUserConfig = {
   solidity: "0.8.19",
 };
@@ -30,15 +29,14 @@ task("compileAndUpdate", "Compiles the contracts and updates the Next.js app").s
 // Task to deploy contracts and update the Next.js app with the contract address
 task("deployAndUpdate", "Deploys the contract and updates the Next.js app").setAction(
   async (_: TaskArguments, hre: HardhatRuntimeEnvironment) => {
-    const contractFactory = await hre.ethers.getContractFactory(CONTRACT_NAME);
-    const contract = await contractFactory.deploy(/* constructor arguments if any */);
+    const contract = await hre.ethers.deployContract(CONTRACT_NAME);
 
     await contract.waitForDeployment();
     const address = await contract.getAddress();
     const contractAddressPath = path.join(__dirname, "..", "next", "contracts", `ContractAddress.json`);
     fs.writeFileSync(contractAddressPath, JSON.stringify({ address }));
 
-    console.log(`Contract deployed to address ${address} and updated in the Next.js app.`);
+    console.log(`Contract ${CONTRACT_NAME} deployed to address ${address} and updated in the Next.js app.`);
   }
 );
 
