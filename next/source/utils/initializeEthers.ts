@@ -19,7 +19,7 @@ export async function initializeEthers(): Promise<{ provider: ethers.Provider; s
         signer = await provider.getSigner();
       }
     } else {
-      provider = ethers.getDefaultProvider("http://localhost:8545");
+      provider = ethers.getDefaultProvider("http://127.0.0.1:8545/");
     }
 
     return { provider, signer };

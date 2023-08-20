@@ -1,11 +1,11 @@
 import { ethers } from "hardhat";
 
 async function main() {
-  const contract = await ethers.deployContract("Voting");
+  const contract = await ethers.deployContract("FoodWars");
 
   await contract.waitForDeployment();
   const address = await contract.getAddress();
-  console.log(`Voting with  deployed to ${contract.target}. And ${JSON.stringify(contract)}. And owner is ${address}`);
+  console.log(`FoodWars with  deployed to ${contract.target}. And ${JSON.stringify(contract)}. And owner is ${address}`);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

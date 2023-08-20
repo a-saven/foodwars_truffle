@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
-import { initializeEthers } from "@/source/ethers/initializeEthers"; // Adjust the path accordingly
+import { initializeEthers } from "@/source/utils/initializeEthers"; // Adjust the path accordingly
 
 export function useEthers() {
   const [provider, setProvider] = useState<ethers.Provider | null>(null);
