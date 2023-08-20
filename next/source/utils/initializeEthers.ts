@@ -8,7 +8,7 @@ declare global {
 
 export async function initializeEthers(): Promise<{ provider: ethers.Provider; signer: ethers.Signer | null }> {
   let signer: ethers.Signer | null = null;
-  let provider: ethers.Provider;
+  let provider: ethers.Provider | null = null;
 
   try {
     const isClient = typeof window !== "undefined";
@@ -19,7 +19,7 @@ export async function initializeEthers(): Promise<{ provider: ethers.Provider; s
         signer = await provider.getSigner();
       }
     } else {
-      provider = ethers.getDefaultProvider("http://127.0.0.1:8545/");
+      provider = ethers.getDefaultProvider("http://127.0.0.1:8545/"); //development
     }
 
     return { provider, signer };
