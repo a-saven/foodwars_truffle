@@ -12,4 +12,6 @@ npx hardhat node
 npx hardhat run scripts/deploy.ts
 # to comple, deploy and pass contract address and abi to next app
 npx hardhat dev --contract YouContractName
+# same as above but with a name
+yarn dev --name=YouContractName
 ```
