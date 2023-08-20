@@ -35,7 +35,8 @@ function App() {
       if (state.votingContract) {
         try {
           const round = await state.votingContract.currentRound();
-          dispatch({ type: "SET_CURRENT_ROUND", payload: round });
+          const roundNumber = Number(round);
+          dispatch({ type: "SET_CURRENT_ROUND", payload: roundNumber });
         } catch (error) {
           console.error("Error fetching current round:", error);
         }
