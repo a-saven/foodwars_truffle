@@ -10,4 +10,6 @@ npx hardhat test
 REPORT_GAS=true npx hardhat test
 npx hardhat node
 npx hardhat run scripts/deploy.ts
+# to comple, deploy and pass contract address and abi to next app
+npx hardhat dev --contract YouContractName
 ```
