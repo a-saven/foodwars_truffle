@@ -19,7 +19,7 @@ export function Connect() {
       console.error("Error connecting to MetaMask:", err);
     }
   };
-  console.log("signer", signer);
+
   const logout = () => {
     setUserAddress(null);
   };

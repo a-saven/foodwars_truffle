@@ -28,7 +28,6 @@ async function fetchRatings(): Promise<IndexedRestaurant[]> {
   const fetchedRestaurants: IndexedRestaurant[] = [];
   for (let i = 1; i <= numberCount; i++) {
     const restaurant: Restaurant = await contractInstance.restaurants(i);
-    console.log("restaurants", restaurant);
 
     fetchedRestaurants.push({
       id: i, // This is the restaurant's ID
@@ -39,9 +38,7 @@ async function fetchRatings(): Promise<IndexedRestaurant[]> {
     });
   }
 
-  // Sort by tips in descending order
-  //fetchedRestaurants.sort((a, b) => Number(b.totalTips) - Number(a.totalTips));
-  console.log("fetchedRestaurants", fetchedRestaurants);
+  fetchedRestaurants.sort((a, b) => Number(b.totalTips) - Number(a.totalTips));
   return fetchedRestaurants;
 }
 
