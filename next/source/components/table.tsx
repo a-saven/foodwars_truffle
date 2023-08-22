@@ -1,49 +1,26 @@
-import { Contract } from "ethers";
-import { initializeEthers } from "@/source/utils/initializeEthers";
-import FoodWars from "@/contracts/FoodWars.json";
-import CA from "@/contracts/contractAddress.json";
-import { BigNumberish, formatEther } from "ethers";
 import { Tip } from "@/source/components/tip";
-
-const CONTRACT_ADDRESS: string = CA.address;
-const CONTRACT_ABI: any[] = FoodWars.abi;
 
 interface Restaurant {
   name: string;
   identifier: string;
   owner: string;
-  totalTips: BigInt;
+  totalTips: number;
 }
 
 interface IndexedRestaurant extends Restaurant {
   id: number;
 }
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-async function fetchRatings(): Promise<IndexedRestaurant[]> {
-  const { provider } = await initializeEthers();
-  const contractInstance = new Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
-  const count: BigInt = await contractInstance.restaurantsCount();
-  const numberCount: number = Number(count);
-
-  const fetchedRestaurants: IndexedRestaurant[] = [];
-  for (let i = 1; i <= numberCount; i++) {
-    const restaurant: Restaurant = await contractInstance.restaurants(i);
-
-    fetchedRestaurants.push({
-      id: i, // This is the restaurant's ID
-      name: restaurant.name,
-      identifier: restaurant.identifier,
-      owner: restaurant.owner,
-      totalTips: restaurant.totalTips,
-    });
-  }
-
-  fetchedRestaurants.sort((a, b) => Number(b.totalTips) - Number(a.totalTips));
-  return fetchedRestaurants;
+function ethToWei(wei: number) {
+  const eth = wei / 1e18;
+  return eth;
 }
 
-export async function Table() {
-  const restaurants: IndexedRestaurant[] = await fetchRatings();
+export async function Table({ restaurants }: { restaurants: IndexedRestaurant[] }) {
+  const res = await fetch(`${BASE_URL}/api/restaurants`, { method: "GET" });
+  const rest = await res.json();
+  console.log("rest", rest);
 
   return (
     <div>
@@ -63,7 +40,7 @@ export async function Table() {
               <tr key={index}>
                 <td>{restaurant.name}</td>
                 <td>{restaurant.identifier}</td>
-                <td>{formatEther(restaurant.totalTips as BigNumberish)}</td>
+                <td>{ethToWei(restaurant.totalTips)}</td>
                 <td>
                   <Tip restaurantId={restaurant.id} />
                 </td>

@@ -24,10 +24,11 @@ export function Tip({ restaurantId }: { restaurantId: number }) {
       const amount = parseEther(tipAmount);
       const tx = await contract.tipRestaurant(restaurantId, { value: amount });
       await tx.wait();
+      console.log("TX:", tx);
       alert("Tip sent successfully!");
       setTipAmount(""); // Reset the input field after successful tip
     } catch (error) {
-      console.error("Error sending tip:", error);
+      console.error(`Error sending tip: ${error}`);
       alert("Failed to send tip");
     }
   };

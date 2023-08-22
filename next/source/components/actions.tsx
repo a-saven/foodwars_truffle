@@ -11,13 +11,14 @@ export function Actions({ signer, userAddress }: { signer: Signer | null; userAd
   const [restaurantName, setRestaurantName] = useState("");
   const [restaurantIdentifier, setRestaurantIdentifier] = useState("");
 
+  const contract = new Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+
   const handleAddRestaurant = async () => {
     if (!signer) {
       alert("Signer not available");
       return;
     }
 
-    const contract = new Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
     try {
       const tx = await contract.addRestaurant(restaurantName, restaurantIdentifier);
       await tx.wait();
@@ -27,6 +28,33 @@ export function Actions({ signer, userAddress }: { signer: Signer | null; userAd
       alert("Failed to add restaurant");
     }
   };
+
+  try {
+    contract.on("RestaurantAdded", async (restaurantId, name, identifier, owner, event) => {
+      try {
+        console.log("RestaurantAdded");
+      } catch (error) {
+        console.error("ErrorRevalidatingAfterRestaurantAdded:", (error as Error).message);
+      } finally {
+        event.removeListener();
+      }
+    });
+  } catch (error) {
+    console.error(" contract.on(RestaurantAdded)", (error as Error).message);
+  }
+  try {
+    contract.on("Tipped", async (restaurantId, tipAmount, authorFee, event) => {
+      try {
+        console.log("Tipped");
+      } catch (error) {
+        console.error("ErrorRevalidatingAfterTipGiven:", (error as Error).message);
+      } finally {
+        event.removeListener();
+      }
+    });
+  } catch (error) {
+    console.error("contract.on(TipGiven)", (error as Error).message);
+  }
 
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between">
