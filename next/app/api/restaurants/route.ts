@@ -8,7 +8,10 @@ import { formatEther } from "ethers";
 const CONTRACT_ADDRESS = CA.address;
 const CONTRACT_ABI = FoodWars.abi;
 
-
+function weiToEth(wei: number) {
+  const eth = wei / 1e18;
+  return eth;
+}
 
 export async function GET() {
   try {
@@ -26,7 +29,7 @@ export async function GET() {
         name: restaurant.name,
         identifier: restaurant.identifier,
         owner: restaurant.owner,
-        totalTips: restaurant.totalTips,
+        totalTips: weiToEth(Number(restaurant.totalTips)),
       });
     }
     fetchedRestaurants.sort((a, b) => Number(b.totalTips) - Number(a.totalTips));

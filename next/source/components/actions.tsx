@@ -7,7 +7,7 @@ import CA from "@/contracts/contractAddress.json";
 const CONTRACT_ADDRESS = CA.address;
 const CONTRACT_ABI = FoodWars.abi;
 
-export function Actions({ signer, userAddress }: { signer: Signer | null; userAddress: string }) {
+export function Actions({ signer, getData }: { signer: Signer | null; getData: Function }) {
   const [restaurantName, setRestaurantName] = useState("");
   const [restaurantIdentifier, setRestaurantIdentifier] = useState("");
 
@@ -33,6 +33,7 @@ export function Actions({ signer, userAddress }: { signer: Signer | null; userAd
     contract.on("RestaurantAdded", async (restaurantId, name, identifier, owner, event) => {
       try {
         console.log("RestaurantAdded");
+        await getData();
       } catch (error) {
         console.error("ErrorRevalidatingAfterRestaurantAdded:", (error as Error).message);
       } finally {
@@ -46,6 +47,7 @@ export function Actions({ signer, userAddress }: { signer: Signer | null; userAd
     contract.on("Tipped", async (restaurantId, tipAmount, authorFee, event) => {
       try {
         console.log("Tipped");
+        await getData();
       } catch (error) {
         console.error("ErrorRevalidatingAfterTipGiven:", (error as Error).message);
       } finally {

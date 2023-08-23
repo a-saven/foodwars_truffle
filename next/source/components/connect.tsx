@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useEthers } from "@/source/utils/hook"; // Adjust the path accordingly
 import { Actions } from "@/source/components/actions";
 
-export function Connect() {
+export function Connect({ getData }: { getData: any }) {
   const { provider, signer, loading, error } = useEthers();
   const [userAddress, setUserAddress] = useState<string | null>(null);
 
@@ -48,7 +48,7 @@ export function Connect() {
           <button onClick={logout} className="bg-red-500 text-white p-2 rounded-md">
             Logout
           </button>
-          <Actions signer={signer} userAddress={userAddress} />
+          <Actions signer={signer} getData={getData} />
         </div>
       )}
     </div>

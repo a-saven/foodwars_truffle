@@ -10,18 +10,8 @@ interface Restaurant {
 interface IndexedRestaurant extends Restaurant {
   id: number;
 }
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-function ethToWei(wei: number) {
-  const eth = wei / 1e18;
-  return eth;
-}
-
-export async function Table({ restaurants }: { restaurants: IndexedRestaurant[] }) {
-  const res = await fetch(`${BASE_URL}/api/restaurants`, { method: "GET" });
-  const rest = await res.json();
-  console.log("rest", rest);
-
+export function Table({ restaurants }: { restaurants: IndexedRestaurant[] }) {
   return (
     <div>
       <h2>Ratings</h2>
@@ -40,7 +30,7 @@ export async function Table({ restaurants }: { restaurants: IndexedRestaurant[] 
               <tr key={index}>
                 <td>{restaurant.name}</td>
                 <td>{restaurant.identifier}</td>
-                <td>{ethToWei(restaurant.totalTips)}</td>
+                <td>{restaurant.totalTips}</td>
                 <td>
                   <Tip restaurantId={restaurant.id} />
                 </td>
