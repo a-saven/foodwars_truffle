@@ -1,6 +1,5 @@
 import { Table } from "@/source/components/table";
 import { Connect } from "@/source/components/connect";
-import { dataSlice } from "ethers";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 

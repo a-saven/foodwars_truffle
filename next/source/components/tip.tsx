@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { parseEther } from "ethers";
 import { useEthers } from "@/source/utils/hook";
-import { BigNumberish, Contract } from "ethers";
+import { Contract } from "ethers";
 import FoodWars from "@/contracts/FoodWars.json"; // Adjust the path accordingly
 import CA from "@/contracts/contractAddress.json";
 
