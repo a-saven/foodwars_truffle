@@ -25,7 +25,8 @@ export function Table({ restaurants }: { restaurants: IndexedRestaurant[] }) {
           </tr>
         </thead>
         <tbody>
-          {restaurants.length > 0 &&
+          {restaurants &&
+            restaurants?.length > 0 &&
             restaurants.map((restaurant, index) => (
               <tr key={index}>
                 <td>{restaurant.name}</td>
