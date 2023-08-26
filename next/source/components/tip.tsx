@@ -36,16 +36,16 @@ export function Tip({ restaurantId }: { restaurantId: number }) {
   if (!signer) return null;
 
   return (
-    <div className="flex items-center">
+    <div className="flex items-center w-32">
       <input
         type="text"
-        placeholder="Tip Amount (ETH)"
+        placeholder="ETH"
         value={tipAmount}
         onChange={(e) => setTipAmount(e.target.value)}
-        className="p-1 border rounded mr-2"
+        className="p-1 border rounded mr-2 w-16"
       />
       <button onClick={() => handleTip(restaurantId)} className="p-1 bg-blue-500 rounded text-white">
-        {`\🌟`}
+        TIP
       </button>
     </div>
   );

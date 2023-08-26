@@ -1,10 +1,9 @@
 "use client";
 import { useState } from "react";
 import { useEthers } from "@/source/utils/hook"; // Adjust the path accordingly
-import { Actions } from "@/source/components/actions";
 
-export function Connect({ getData }: { getData: any }) {
-  const { provider, signer, loading, error } = useEthers();
+export function Connect() {
+  const { signer, loading, error } = useEthers();
   const [userAddress, setUserAddress] = useState<string | null>(null);
 
   const connectToMetaMask = async () => {
@@ -32,26 +31,24 @@ export function Connect({ getData }: { getData: any }) {
     return <div>Error: {error.message}</div>;
   }
 
+  function shortenAddress(address: string): string {
+    if (!address || address.length < 6) return address;
+    return `${address.substring(0, 3)}...${address.substring(address.length - 3)}`;
+  }
+
   return (
-    <div className="mb-5 flex-col justify-center">
+    <div className="flex justify-end">
       {!userAddress ? (
-        <div className="flex flex-col sm:flex-row items-center justify-center">
-          <p className="pr-4">{`To tip -> `}</p>
-          <button onClick={connectToMetaMask} className="bg-blue-500 text-white p-2 rounded-md">
-            Connect to MetaMask
-          </button>
-        </div>
+        <button onClick={connectToMetaMask} className="bg-amber-500 text-white p-2 rounded-md">
+          Connect to MetaMask
+        </button>
       ) : (
-        <div className="flex flex-col sm:flex-row items-center justify-between">
-          <div className="text-xl font-bold mb-2">
-            <p>Connected as: {userAddress}</p>
-          </div>
-          <button onClick={logout} className="bg-red-500 text-white p-2 rounded-md">
-            Logout
-          </button>
-          <Actions signer={signer} getData={getData} />
-        </div>
+        <button onClick={logout} className="bg-amber-500	 text-white p-2 rounded-md">
+          Logout as {shortenAddress(userAddress)}
+        </button>
       )}
     </div>
+
+    //<Actions signer={signer} getData={getData} />
   );
 }
