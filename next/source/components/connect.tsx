@@ -33,9 +33,10 @@ export function Connect({ getData }: { getData: any }) {
   }
 
   return (
-    <div className="mb-5">
+    <div className="mb-5 flex-col justify-center">
       {!userAddress ? (
-        <div className="flex flex-col sm:flex-row items-center justify-between">
+        <div className="flex flex-col sm:flex-row items-center justify-center">
+          <p className="pr-4">{`To tip -> `}</p>
           <button onClick={connectToMetaMask} className="bg-blue-500 text-white p-2 rounded-md">
             Connect to MetaMask
           </button>

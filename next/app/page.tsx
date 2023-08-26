@@ -3,9 +3,9 @@ import { Restaurants } from "@/source/components/restaurants";
 
 export default async function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center p-24">
-      <div className="z-10 w-full max-w-5xl items-center font-mono text-center">
-        {/* Big puffy font header */}
+    <main className="flex min-h-screen flex-col items-center">
+      <div className="z-10 w-full max-w-5xl items-center font-mono text-center m-4">
+        <App />
         <div>
           <h1 className="text-6xl font-extrabold mb-8 text-brown-500 bg-brown-500 p-4 rounded-lg tracking-widest font-mono text-shadow-lg shadow-amber-800">
             FOODWARS
@@ -14,7 +14,6 @@ export default async function Home() {
           <h6>Establisment with most tips wins!</h6>
         </div>
         <Restaurants />
-        <App />
       </div>
     </main>
   );

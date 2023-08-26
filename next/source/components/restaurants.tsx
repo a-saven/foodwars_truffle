@@ -1,28 +1,68 @@
 import { getRestaurants } from "@/source/utils/getMongo";
+import { getData } from "@/source/utils/getData";
 
 type RestaurantItem = {
   _id: string;
   title: string;
   info: any;
+  contact: string;
+  owner: string;
+  limited: boolean;
+  totalTips?: Number; // Add this field for the merge
 };
 
-export async function Restaurants() {
-  const documents = await getRestaurants();
+type Document = {
+  _id: string;
+  title: string;
+  address: string;
+  info: string;
+  contact: string;
+  owner: string;
+  limited: boolean;
+  totalTips?: Number; // Add this field for the merged data
+};
 
+type Rank = {
+  id: number;
+  name: string;
+  identifier: string;
+  owner: string;
+  totalTips: number;
+};
+
+function weiToEth(wei: number) {
+  const eth = wei / 1e18;
+  return eth;
+}
+
+async function mergeData(): Promise<RestaurantItem[]> {
+  const documents: Document[] = await getRestaurants();
+  const ranks: Rank[] = await getData();
+
+  return documents
+    .filter((doc) => ranks.some((rank) => rank.identifier === doc._id))
+    .map((doc) => {
+      const matchingRank = ranks.find((rank) => rank.identifier === doc._id);
+      if (matchingRank) {
+        doc.totalTips = weiToEth(matchingRank.totalTips);
+      }
+      return doc;
+    });
+}
+
+export async function Restaurants() {
+  const documents = await mergeData();
   return (
     <div className="flex flex-col">
       {documents.map((item: RestaurantItem, index: number) => (
         <div key={item._id} className="flex flex-row justify-between">
           <div className="m-4">{index + 1}</div>
           <div className="flex-1 m-4 justify-start">
-            <a
-              href={`https://u-menu.app/${item._id}`}
-              className="text-blue-500 underline hover:no-underline font-semibold text-xl"
-            >
+            <a href={`https://u-menu.app/${item._id}`} className="text-blue-500 hover:underline font-semibold text-xl">
               <h1>{item.title}</h1>
             </a>
           </div>
-          <div className="m-4">Tips</div>
+          <div className="m-4">{`${item?.totalTips}`}</div>
         </div>
       ))}
     </div>
