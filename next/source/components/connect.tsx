@@ -1,14 +1,20 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useEthers } from "@/source/utils/hook"; // Adjust the path accordingly
+import Link from "next/link";
 
 export function Connect() {
   const { signer, loading, error } = useEthers();
   const [userAddress, setUserAddress] = useState<string | null>(null);
 
+  useEffect(() => {
+    // Check the address on component render
+    connectToMetaMask();
+  }, [signer]); // Empty dependency array to ensure this runs once when the component mounts
+
   const connectToMetaMask = async () => {
     if (!signer) {
-      alert("Unable to connect to MetaMask.");
+      console.log("Unable to connect to MetaMask.");
       return;
     }
     try {
@@ -43,9 +49,14 @@ export function Connect() {
           Connect to MetaMask
         </button>
       ) : (
-        <button onClick={logout} className="bg-amber-500	 text-white p-2 rounded-md">
-          Logout as {shortenAddress(userAddress)}
-        </button>
+        <div>
+          <button onClick={logout} className="bg-amber-500	 text-white p-2 rounded-md">
+            Logout as {shortenAddress(userAddress)}
+          </button>
+          <button className="bg-amber-500	 text-white p-2 rounded-md ml-1">
+            <Link href="/add">Add</Link>
+          </button>
+        </div>
       )}
     </div>
 
