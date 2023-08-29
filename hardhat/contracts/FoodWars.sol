@@ -13,12 +13,18 @@ contract FoodWars {
     uint public restaurantsCount = 0;
 
     address payable public contractAuthor = payable(msg.sender);
-    uint256 public authorFeePercentage = 5; // 5% fee for the contract author
+    uint256 authorFeePercentage = 5; // 5% fee for the contract author
+
+     event UnrecognizedSelector(bytes4 selector);
+
+    fallback() external {
+        emit UnrecognizedSelector(msg.sig);
+    }
 
     event RestaurantAdded(uint restaurantId, string name, string identifier, address owner);
     event Tipped(uint restaurantId, uint256 tipAmount, uint256 authorFee);
 
-    function addRestaurant(string memory _name, string memory _identifier) public {
+    function addRestaurant(string memory _name, string memory _identifier) public {  
         restaurantsCount++;
         restaurants[restaurantsCount] = Restaurant({
             name: _name,
