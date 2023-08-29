@@ -73,7 +73,6 @@ export async function Restaurants() {
             <button className="bg-amber-500 text-white p-2 rounded-md ml-1">
               <Link href={`/tip/${item?.rankId}`}>TIP</Link>
             </button>
-            {/* <Tip restaurantId={item?.rankId as number} /> */}
           </div>
         </div>
       ))}

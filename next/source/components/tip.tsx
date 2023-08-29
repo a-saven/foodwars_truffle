@@ -6,6 +6,7 @@ import { Contract } from "ethers";
 import FoodWars from "@/contracts/FoodWars.json"; // Adjust the path accordingly
 import CA from "@/contracts/contractAddress.json";
 import { toUtf8String } from "ethers";
+import { getData } from "@/source/utils/getData";
 
 const CONTRACT_ADDRESS = CA.address;
 const CONTRACT_ABI = FoodWars.abi;
@@ -38,6 +39,21 @@ export function Tip({ restaurantId }: { restaurantId: number }) {
     } catch (error) {
       console.error(`Error sending tip: ${error}`);
       alert("Failed to send tip");
+    }
+
+    try {
+      contract.on("Tipped", async (restaurantId, tipAmount, authorFee, event) => {
+        try {
+          console.log("Tipped");
+          await getData();
+        } catch (error) {
+          console.error("ErrorRevalidatingAfterTipGiven:", (error as Error).message);
+        } finally {
+          event.removeListener();
+        }
+      });
+    } catch (error) {
+      console.error("contract.on(TipGiven)", (error as Error).message);
     }
   };
 

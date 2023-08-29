@@ -26,7 +26,7 @@ interface AddRestaurantFormProps {
 function AddRestaurantForm({ signer }: AddRestaurantFormProps) {
   const [restaurantName, setRestaurantName] = useState("");
   const [restaurantIdentifier, setRestaurantIdentifier] = useState("");
-  
+
   const contract = new Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
 
   const handleAddRestaurant = async () => {
@@ -57,20 +57,6 @@ function AddRestaurantForm({ signer }: AddRestaurantFormProps) {
     });
   } catch (error) {
     console.error(" contract.on(RestaurantAdded)", (error as Error).message);
-  }
-  try {
-    contract.on("Tipped", async (restaurantId, tipAmount, authorFee, event) => {
-      try {
-        console.log("Tipped");
-        await getData();
-      } catch (error) {
-        console.error("ErrorRevalidatingAfterTipGiven:", (error as Error).message);
-      } finally {
-        event.removeListener();
-      }
-    });
-  } catch (error) {
-    console.error("contract.on(TipGiven)", (error as Error).message);
   }
 
   return (
