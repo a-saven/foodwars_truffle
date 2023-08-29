@@ -1,10 +1,10 @@
-import { Actions } from "@/source/components/add";
+import { AddRestaurant } from "@/source/components/add";
 
 // list of not added restaurants
 // select field
 // add
 
-export default async function Add() {
+export default async function Page() {
   return (
     <div>
       <h6>Add restaurant to rank</h6>
@@ -15,7 +15,7 @@ export default async function Add() {
         </a>
       </h6>
       <h6>Then select and add your restaurant to the rank with ETH</h6>
-      <Actions />
+      <AddRestaurant />
     </div>
   );
 }

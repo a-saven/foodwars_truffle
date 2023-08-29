@@ -4,7 +4,7 @@ import { parseEther } from "ethers";
 import { useEthers } from "@/source/utils/hook";
 import { Contract } from "ethers";
 import FoodWars from "@/contracts/FoodWars.json"; // Adjust the path accordingly
-import CA from "@/contracts/contractAddress.json";
+import CA from "@/contracts/ContractAddress.json";
 import { toUtf8String } from "ethers";
 import { getData } from "@/source/utils/getData";
 

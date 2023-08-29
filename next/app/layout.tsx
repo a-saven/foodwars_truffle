@@ -2,6 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { Connect } from "@/source/components/connect";
+import Link from "next/link";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,9 +19,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="z-10 w-full max-w-5xl items-center font-mono text-center m-2">
             <Connect />
             <div>
-              <h1 className="text-6xl font-extrabold mb-4 text-brown-500 bg-brown-500 p-2 rounded-lg tracking-widest font-mono text-shadow-lg shadow-amber-800">
-                FOODWARS
-              </h1>
+              <Link href="/">
+                <h1 className="text-6xl font-extrabold mb-4 text-brown-500 bg-brown-500 p-2 rounded-lg tracking-widest font-mono text-shadow-lg shadow-amber-800">
+                  FOODWARS
+                </h1>
+              </Link>
             </div>
             {children}
           </div>
@@ -29,4 +32,3 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }
-                
