@@ -23,10 +23,6 @@ export function Tip({ restaurantId }: { restaurantId: number }) {
 
     const contract = new Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
 
-    contract.on("UnrecognizedSelector", (selector) => {
-      console.log("Unrecognized function selector:", toUtf8String(selector));
-    });
-
     try {
       const amount = parseEther(tipAmount);
       const restaurantIndex = restaurantId - 1;
@@ -41,20 +37,20 @@ export function Tip({ restaurantId }: { restaurantId: number }) {
       alert("Failed to send tip");
     }
 
-    try {
-      contract.on("Tipped", async (restaurantId, tipAmount, authorFee, event) => {
-        try {
-          console.log("Tipped");
-          await getData();
-        } catch (error) {
-          console.error("ErrorRevalidatingAfterTipGiven:", (error as Error).message);
-        } finally {
-          event.removeListener();
-        }
-      });
-    } catch (error) {
-      console.error("contract.on(TipGiven)", (error as Error).message);
-    }
+    //   try {
+    //     contract.on("Tipped", async (restaurantId, tipAmount, authorFee, event) => {
+    //       try {
+    //         console.log("Tipped");
+    //         await getData();
+    //       } catch (error) {
+    //         console.error("ErrorRevalidatingAfterTipGiven:", (error as Error).message);
+    //       } finally {
+    //         event.removeListener();
+    //       }
+    //     });
+    //   } catch (error) {
+    //     console.error("contract.on(TipGiven)", (error as Error).message);
+    //   }
   };
 
   if (!signer) return null;

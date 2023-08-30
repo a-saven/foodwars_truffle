@@ -50,10 +50,10 @@ function AddRestaurantForm({ signer }: AddRestaurantFormProps) {
   };
 
   const handleRestaurantChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedRestaurant: any = suggestions.find((r: any) => r.identifier === e.target.value);
+    const selectedRestaurant: any = suggestions.find((s: any) => s._id === e.target.value);
     if (selectedRestaurant) {
-      setRestaurantName(selectedRestaurant.name);
-      setRestaurantIdentifier(selectedRestaurant.identifier);
+      setRestaurantIdentifier(selectedRestaurant._id);
+      setRestaurantName(selectedRestaurant.title);
     }
   };
 

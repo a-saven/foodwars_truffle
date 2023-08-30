@@ -1,6 +1,5 @@
 import { getRestaurants } from "@/source/utils/getMongo";
 import { getData } from "@/source/utils/getData";
-import { Tip } from "@/source/components/tip";
 import Link from "next/link";
 
 type RestaurantItem = {
@@ -34,11 +33,6 @@ type Rank = {
   totalTips: number;
 };
 
-function weiToEth(wei: number) {
-  const eth = wei / 1e18;
-  return eth;
-}
-
 async function mergeData(): Promise<RestaurantItem[]> {
   const documents: Document[] = await getRestaurants();
   const ranks: Rank[] = await getData();
@@ -48,7 +42,7 @@ async function mergeData(): Promise<RestaurantItem[]> {
     .map((doc) => {
       const matchingRank = ranks.find((rank) => rank.identifier === doc._id);
       if (matchingRank) {
-        doc.totalTips = weiToEth(matchingRank.totalTips);
+        doc.totalTips = matchingRank.totalTips;
         doc.rankId = matchingRank.id; // Added this line
       }
       return doc;
@@ -57,7 +51,6 @@ async function mergeData(): Promise<RestaurantItem[]> {
 
 export async function Restaurants() {
   const documents = await mergeData();
-
   return (
     <div className="flex flex-col">
       {documents.map((item: RestaurantItem, index: number) => (
