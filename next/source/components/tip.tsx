@@ -5,7 +5,6 @@ import { useEthers } from "@/source/utils/hook";
 import { Contract } from "ethers";
 import FoodWars from "@/contracts/FoodWars.json"; // Adjust the path accordingly
 import CA from "@/contracts/ContractAddress.json";
-import { toUtf8String } from "ethers";
 import { getData } from "@/source/utils/getData";
 
 const CONTRACT_ADDRESS = CA.address;
@@ -25,9 +24,7 @@ export function Tip({ restaurantId }: { restaurantId: number }) {
 
     try {
       const amount = parseEther(tipAmount);
-      const restaurantIndex = restaurantId - 1;
-      console.log("restaurantIndex", restaurantIndex);
-      const tx = await contract.tipRestaurant(restaurantIndex, { value: amount });
+      const tx = await contract.tipRestaurant(restaurantId, { value: amount });
       await tx.wait();
       console.log("TX:", tx);
       alert("Tip sent successfully!");
@@ -37,20 +34,20 @@ export function Tip({ restaurantId }: { restaurantId: number }) {
       alert("Failed to send tip");
     }
 
-    //   try {
-    //     contract.on("Tipped", async (restaurantId, tipAmount, authorFee, event) => {
-    //       try {
-    //         console.log("Tipped");
-    //         await getData();
-    //       } catch (error) {
-    //         console.error("ErrorRevalidatingAfterTipGiven:", (error as Error).message);
-    //       } finally {
-    //         event.removeListener();
-    //       }
-    //     });
-    //   } catch (error) {
-    //     console.error("contract.on(TipGiven)", (error as Error).message);
-    //   }
+    try {
+      contract.on("Tipped", async (restaurantId, tipAmount, authorFee, event) => {
+        try {
+          console.log("Tipped");
+          await getData();
+        } catch (error) {
+          console.error("ErrorRevalidatingAfterTipGiven:", (error as Error).message);
+        } finally {
+          event.removeListener();
+        }
+      });
+    } catch (error) {
+      console.error("contract.on(TipGiven)", (error as Error).message);
+    }
   };
 
   if (!signer) return null;

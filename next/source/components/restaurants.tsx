@@ -1,6 +1,7 @@
 import { getRestaurants } from "@/source/utils/getMongo";
 import { getData } from "@/source/utils/getData";
 import Link from "next/link";
+export const revalidate = 0; // revalidate the data at most every hour
 
 type RestaurantItem = {
   _id: string;
