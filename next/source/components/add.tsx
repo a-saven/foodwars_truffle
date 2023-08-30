@@ -27,6 +27,12 @@ function AddRestaurantForm({ signer }: AddRestaurantFormProps) {
   const [restaurantName, setRestaurantName] = useState("");
   const [restaurantIdentifier, setRestaurantIdentifier] = useState("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+
+  const filteredSuggestions = suggestions.filter((suggestion: any) =>
+    suggestion.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   useEffect(() => {
     fetchRestaurantsNotInBlockchain();
@@ -35,22 +41,21 @@ function AddRestaurantForm({ signer }: AddRestaurantFormProps) {
   const contract = new Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
 
   const fetchRestaurantsNotInBlockchain = async () => {
-    const blockchainRestaurantsData = await fetch("/api/restaurants").then((res) => res.json());
-    const blockchainRestaurants = blockchainRestaurantsData?.data;
-    console.log("blockchainRestaurants", blockchainRestaurants);
-    const mongoRestaurantsData = await fetch("/api/mongo").then((res) => res.json());
-    const mongoRestaurants = mongoRestaurantsData?.data;
-    console.log("mongoRestaurants", mongoRestaurants);
-    const blockchainRestaurantIdentifiers = blockchainRestaurants.map((r: any) => r.identifier);
-    const notInBlockchain = mongoRestaurants.filter(
-      (r: any) => !blockchainRestaurantIdentifiers.includes(r.identifier)
-    );
+    const blockchainRestaurantsRes = await fetch("/api/restaurants");
+    const blockchainRestaurantsData = await blockchainRestaurantsRes.json();
+    const blockchainRestaurants = blockchainRestaurantsData.data || [];
 
+    const mongoRestaurantsRes = await fetch("/api/mongo");
+    const mongoRestaurantsData = await mongoRestaurantsRes.json();
+    const mongoRestaurants = mongoRestaurantsData.data || [];
+
+    const blockchainRestaurantIdentifiers = blockchainRestaurants.map((r: any) => r.identifier);
+    const notInBlockchain = mongoRestaurants.filter((r: any) => !blockchainRestaurantIdentifiers.includes(r._id));
     setSuggestions(notInBlockchain);
   };
 
-  const handleRestaurantChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedRestaurant: any = suggestions.find((s: any) => s._id === e.target.value);
+  const handleRestaurantChange = (_id: string) => {
+    const selectedRestaurant: any = suggestions.find((s: any) => s._id === _id);
     if (selectedRestaurant) {
       setRestaurantIdentifier(selectedRestaurant._id);
       setRestaurantName(selectedRestaurant.title);
@@ -86,26 +91,44 @@ function AddRestaurantForm({ signer }: AddRestaurantFormProps) {
   } catch (error) {
     console.error(" contract.on(RestaurantAdded)", (error as Error).message);
   }
-  console.log("suggestions", suggestions);
 
   return (
     <div className="flex flex-col space-y-2">
-      <select
-        value={restaurantIdentifier}
-        onChange={handleRestaurantChange}
-        className="p-2 border rounded bg-gray-100 text-black"
-      >
-        <option value="" disabled>
-          Select a restaurant
-        </option>
-        {suggestions.map((suggestion: any) => (
-          <option value={suggestion._id} key={suggestion._id}>
-            {suggestion.title}
-          </option>
-        ))}
-      </select>
-      {/* Hidden input for the identifier */}
+      {/* Wrapper for the input and the dropdown */}
+      <div className="relative w-full">
+        <input
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setIsDropdownVisible(true);
+          }}
+          onFocus={() => setIsDropdownVisible(true)}
+          onBlur={() => setTimeout(() => setIsDropdownVisible(false), 200)}
+          className="p-2 border rounded bg-gray-100 text-black w-full"
+          placeholder="Type to search..."
+        />
+
+        {isDropdownVisible && (
+          <div className="absolute top-full left-0 z-10 border bg-white max-h-60 overflow-y-auto rounded w-full">
+            {filteredSuggestions.map((suggestion: any) => (
+              <div
+                key={suggestion._id}
+                className="cursor-pointer hover:bg-gray-200 p-2"
+                onClick={() => {
+                  setSearchTerm(suggestion.title);
+                  setIsDropdownVisible(false);
+                  handleRestaurantChange(suggestion._id);
+                }}
+              >
+                {suggestion.title}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
       <input type="hidden" value={restaurantIdentifier} />
+
       <button onClick={handleAddRestaurant} className="bg-blue-500 text-white p-2 rounded">
         Add Restaurant
       </button>
