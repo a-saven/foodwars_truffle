@@ -3,7 +3,6 @@ import { initializeEthers } from "@/source/utils/initializeEthers";
 import FoodWars from "@/contracts/FoodWars.json";
 import CA from "@/contracts/ContractAddress.json";
 import { NextResponse } from "next/server";
-import { formatEther } from "ethers";
 
 const CONTRACT_ADDRESS = CA.address;
 const CONTRACT_ABI = FoodWars.abi;
