@@ -1,38 +1,9 @@
 import { getRestaurants } from "@/source/utils/getMongo";
 import { getData } from "@/source/utils/getData";
 import Link from "next/link";
+import { RestaurantItem, Document, Rank } from "@/source/types";
+
 export const revalidate = 0; // revalidate the data at most every hour
-
-type RestaurantItem = {
-  _id: string;
-  title: string;
-  info: any;
-  contact: string;
-  owner: string;
-  limited: boolean;
-  totalTips?: Number; // Add this field for the merge
-  rankId?: number; // Add this field for the merge
-};
-
-type Document = {
-  _id: string;
-  title: string;
-  address: string;
-  info: string;
-  contact: string;
-  owner: string;
-  limited: boolean;
-  totalTips?: Number; // Add this field for the merged data
-  rankId?: number; // Add this field for the merge
-};
-
-type Rank = {
-  id: number;
-  name: string;
-  identifier: string;
-  owner: string;
-  totalTips: number;
-};
 
 async function mergeData(): Promise<RestaurantItem[]> {
   const documents: Document[] = await getRestaurants();
