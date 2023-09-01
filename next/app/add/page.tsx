@@ -1,9 +1,5 @@
 import { AddRestaurant } from "@/source/components/add";
 
-// list of not added restaurants
-// select field
-// add
-
 export default async function Page() {
   return (
     <div>

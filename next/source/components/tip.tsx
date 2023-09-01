@@ -1,27 +1,29 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { parseEther } from "ethers";
 import { useEthers } from "@/source/utils/hook";
-import { Contract } from "ethers";
-import FoodWars from "@/contracts/FoodWars.json"; // Adjust the path accordingly
-import CA from "@/contracts/ContractAddress.json";
+import { getContract } from "@/source/utils/contract";
 import { getData } from "@/source/utils/getData";
 
-const CONTRACT_ADDRESS = CA.address;
-const CONTRACT_ABI = FoodWars.abi;
-
-export function Tip({ restaurantId }: { restaurantId: number }) {
-  const { signer } = useEthers();
+function TipInner({ restaurantId, signer }: { restaurantId: number; signer: any }) {
   const [tipAmount, setTipAmount] = useState<string>("");
 
+  const contract = getContract(signer);
+
+  useEffect(() => {
+    const handleTipped = async (restaurantId: any, tipAmount: any, authorFee: any) => {
+      console.log("Tipped");
+      await getData();
+    };
+
+    contract.on("Tipped", handleTipped);
+
+    return () => {
+      contract.off("Tipped", handleTipped);
+    };
+  }, [contract]);
+
   const handleTip = async (restaurantId: number) => {
-    if (!signer) {
-      alert("Signer not available");
-      return;
-    }
-
-    const contract = new Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
-
     try {
       const amount = parseEther(tipAmount);
       const tx = await contract.tipRestaurant(restaurantId, { value: amount });
@@ -33,24 +35,7 @@ export function Tip({ restaurantId }: { restaurantId: number }) {
       console.error(`Error sending tip: ${error}`);
       alert("Failed to send tip");
     }
-
-    try {
-      contract.on("Tipped", async (restaurantId, tipAmount, authorFee, event) => {
-        try {
-          console.log("Tipped");
-          await getData();
-        } catch (error) {
-          console.error("ErrorRevalidatingAfterTipGiven:", (error as Error).message);
-        } finally {
-          event.removeListener();
-        }
-      });
-    } catch (error) {
-      console.error("contract.on(TipGiven)", (error as Error).message);
-    }
   };
-
-  if (!signer) return null;
 
   return (
     <div className="flex flex-col justify-center items-center">
@@ -69,4 +54,12 @@ export function Tip({ restaurantId }: { restaurantId: number }) {
       </div>
     </div>
   );
+}
+
+export function Tip(props: { restaurantId: number }) {
+  const { signer } = useEthers();
+
+  if (!signer) return null;
+
+  return <TipInner {...props} signer={signer} />;
 }

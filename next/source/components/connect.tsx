@@ -10,8 +10,7 @@ export function Connect() {
   useEffect(() => {
     // Check the address on component render
     connectToMetaMask();
-  }, [signer]); // Empty dependency array to ensure this runs once when the component mounts
-
+  }, [signer]);
   const connectToMetaMask = async () => {
     if (!signer) {
       console.log("Unable to connect to MetaMask.");
@@ -59,7 +58,5 @@ export function Connect() {
         </div>
       )}
     </div>
-
-    //<Actions signer={signer} getData={getData} />
   );
 }

@@ -9,6 +9,7 @@ import { SearchInput } from "@/source/elements/searchInput";
 import { DropdownComponent } from "@/source/elements/dropdown";
 import { AddRestaurantButton } from "@/source/elements/button";
 import { RestaurantDocument } from "@/source/types";
+import { getContract } from "@/source/utils/contract";
 
 const CONTRACT_ADDRESS = CA.address;
 const CONTRACT_ABI = FoodWars.abi;
@@ -42,7 +43,21 @@ function AddRestaurantForm({ signer }: AddRestaurantFormProps) {
     fetchRestaurantsNotInBlockchain();
   }, []);
 
-  const contract = new Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+  const contract = getContract(signer);
+
+  useEffect(() => {
+    const handleRestaurantAdded = async (restaurantId: any, name: any, identifier: any, owner: any, event: any) => {
+      console.log("RestaurantAdded");
+      console.log("restaurantId", restaurantId, name, identifier, owner, event);
+      // await getData();
+    };
+
+    contract.on("RestaurantAdded", handleRestaurantAdded);
+
+    return () => {
+      contract.off("RestaurantAdded", handleRestaurantAdded);
+    };
+  }, []);
 
   const fetchRestaurantsNotInBlockchain = async () => {
     const blockchainRestaurantsRes = await fetch("/api/restaurants");
@@ -80,21 +95,6 @@ function AddRestaurantForm({ signer }: AddRestaurantFormProps) {
       alert("Failed to add restaurant");
     }
   };
-
-  try {
-    contract.on("RestaurantAdded", async (restaurantId, name, identifier, owner, event) => {
-      try {
-        console.log("RestaurantAdded");
-        await getData();
-      } catch (error) {
-        console.error("ErrorRevalidatingAfterRestaurantAdded:", (error as Error).message);
-      } finally {
-        event.removeListener();
-      }
-    });
-  } catch (error) {
-    console.error(" contract.on(RestaurantAdded)", (error as Error).message);
-  }
 
   return (
     <div className="flex flex-col space-y-2">
