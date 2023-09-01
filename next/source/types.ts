@@ -1,29 +1,25 @@
 type LanguageKey = "en" | "es" | "fr" | "de" | "it" | "pt" | "pl" | "ja" | "nl" | "ru" | "uk" | "ar" | "zh"; // Add other languages as needed
+
 type LocalizedInfo = {
   [key in LanguageKey]?: string;
 };
 
-export type RestaurantItem = {
+export type BaseRestaurant = {
   _id: string;
   title: string;
   info: LocalizedInfo;
   contact: string;
   owner: string;
   limited: boolean;
-  totalTips?: Number;
-  rankId?: number;
 };
 
-export type Document = {
-  _id: string;
-  title: string;
+export type RestaurantDocument = BaseRestaurant & {
   address: string;
-  info: LocalizedInfo;
-  contact: string;
-  owner: string;
-  limited: boolean;
-  totalTips?: Number;
-  rankId?: number;
+};
+
+export type MergedRestaurant = BaseRestaurant & {
+  totalTips: number;
+  rankId: number;
 };
 
 export type Rank = {
