@@ -1,5 +1,5 @@
-import { getRestaurants } from "@/source/utils/getMongo";
-import { getData } from "@/source/utils/getData";
+import { getRestaurants } from "@/source/utils/getRestaurants";
+import { getRanks } from "@/source/utils/getRanks";
 import Link from "next/link";
 import { RestaurantDocument, MergedRestaurant, Rank } from "@/source/types";
 
@@ -8,7 +8,7 @@ export const revalidate = 0;
 async function fetchAndMergeData(): Promise<MergedRestaurant[]> {
   const [restaurantDocs, blockchainRankings]: [RestaurantDocument[], Rank[]] = await Promise.all([
     getRestaurants(),
-    getData(),
+    getRanks(),
   ]);
 
   return restaurantDocs

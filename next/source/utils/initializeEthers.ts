@@ -1,5 +1,7 @@
 import { ethers } from "ethers";
 
+const PROVIDER_URL = process.env.PROVIDER_URL || "http://localhost:8545";
+
 declare global {
   interface Window {
     ethereum: any;
@@ -19,7 +21,7 @@ export async function initializeEthers(): Promise<{ provider: ethers.Provider; s
         signer = await provider.getSigner();
       }
     } else {
-      provider = ethers.getDefaultProvider("http://127.0.0.1:8545/"); //development
+      provider = ethers.getDefaultProvider(PROVIDER_URL);
     }
 
     return { provider, signer };

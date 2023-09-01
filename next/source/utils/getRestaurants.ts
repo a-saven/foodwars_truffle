@@ -1,7 +1,8 @@
 const API_KEY = process.env.MONGO_KEY || "no key";
+const MONGO_URL = process.env.MONGO_URL || "no url";
 
 export const getRestaurants = async () => {
-  const url = "https://eu-central-1.aws.data.mongodb-api.com/app/data-velzl/endpoint/data/v1/action/find";
+  const url = MONGO_URL;
   const headers = {
     "Content-Type": "application/json",
     "Access-Control-Request-Headers": "*",

@@ -1,18 +1,12 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Signer, Contract } from "ethers";
-import FoodWars from "@/contracts/FoodWars.json";
-import CA from "@/contracts/ContractAddress.json";
-import { useEthers } from "@/source/utils/hook";
-import { getData } from "@/source/utils/getData";
+import { Signer } from "ethers";
+import { useEthers } from "@/source/utils/useEthers";
 import { SearchInput } from "@/source/elements/searchInput";
 import { DropdownComponent } from "@/source/elements/dropdown";
 import { AddRestaurantButton } from "@/source/elements/button";
 import { RestaurantDocument } from "@/source/types";
 import { getContract } from "@/source/utils/contract";
-
-const CONTRACT_ADDRESS = CA.address;
-const CONTRACT_ABI = FoodWars.abi;
 
 export function AddRestaurant() {
   const { signer } = useEthers();
@@ -49,7 +43,6 @@ function AddRestaurantForm({ signer }: AddRestaurantFormProps) {
     const handleRestaurantAdded = async (restaurantId: any, name: any, identifier: any, owner: any, event: any) => {
       console.log("RestaurantAdded");
       console.log("restaurantId", restaurantId, name, identifier, owner, event);
-      // await getData();
     };
 
     contract.on("RestaurantAdded", handleRestaurantAdded);

@@ -1,9 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import { parseEther } from "ethers";
-import { useEthers } from "@/source/utils/hook";
+import { useEthers } from "@/source/utils/useEthers";
 import { getContract } from "@/source/utils/contract";
-import { getData } from "@/source/utils/getData";
 
 function TipInner({ restaurantId, signer }: { restaurantId: number; signer: any }) {
   const [tipAmount, setTipAmount] = useState<string>("");
@@ -13,7 +12,6 @@ function TipInner({ restaurantId, signer }: { restaurantId: number; signer: any 
   useEffect(() => {
     const handleTipped = async (restaurantId: any, tipAmount: any, authorFee: any) => {
       console.log("Tipped");
-      await getData();
     };
 
     contract.on("Tipped", handleTipped);

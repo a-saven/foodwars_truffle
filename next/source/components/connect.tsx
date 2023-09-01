@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useEthers } from "@/source/utils/hook"; // Adjust the path accordingly
+import { useEthers } from "@/source/utils/useEthers"; // Adjust the path accordingly
 import Link from "next/link";
 
 export function Connect() {
@@ -8,9 +8,9 @@ export function Connect() {
   const [userAddress, setUserAddress] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check the address on component render
     connectToMetaMask();
   }, [signer]);
+
   const connectToMetaMask = async () => {
     if (!signer) {
       console.log("Unable to connect to MetaMask.");
