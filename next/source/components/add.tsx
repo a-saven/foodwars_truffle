@@ -1,10 +1,14 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Signer, Contract } from "ethers";
-import FoodWars from "@/contracts/FoodWars.json"; // Adjust the path accordingly
+import FoodWars from "@/contracts/FoodWars.json";
 import CA from "@/contracts/ContractAddress.json";
-import { useEthers } from "@/source/utils/hook"; // Adjust the path accordingly
+import { useEthers } from "@/source/utils/hook";
 import { getData } from "@/source/utils/getData";
+import { SearchInput } from "@/source/elements/searchInput";
+import { DropdownComponent } from "@/source/elements/dropdown";
+import { AddRestaurantButton } from "@/source/elements/button";
+import { RestaurantDocument } from "@/source/types";
 
 const CONTRACT_ADDRESS = CA.address;
 const CONTRACT_ABI = FoodWars.abi;
@@ -26,7 +30,7 @@ interface AddRestaurantFormProps {
 function AddRestaurantForm({ signer }: AddRestaurantFormProps) {
   const [restaurantName, setRestaurantName] = useState("");
   const [restaurantIdentifier, setRestaurantIdentifier] = useState("");
-  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [suggestions, setSuggestions] = useState<RestaurantDocument[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
 
@@ -94,44 +98,22 @@ function AddRestaurantForm({ signer }: AddRestaurantFormProps) {
 
   return (
     <div className="flex flex-col space-y-2">
-      {/* Wrapper for the input and the dropdown */}
       <div className="relative w-full">
-        <input
-          value={searchTerm}
-          onChange={(e) => {
-            setSearchTerm(e.target.value);
-            setIsDropdownVisible(true);
-          }}
-          onFocus={() => setIsDropdownVisible(true)}
-          onBlur={() => setTimeout(() => setIsDropdownVisible(false), 200)}
-          className="p-2 border rounded bg-gray-100 text-black w-full"
-          placeholder="Type to search..."
+        <SearchInput
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          setIsDropdownVisible={setIsDropdownVisible}
         />
-
         {isDropdownVisible && (
-          <div className="absolute top-full left-0 z-10 border bg-white max-h-60 overflow-y-auto rounded w-full">
-            {filteredSuggestions.map((suggestion: any) => (
-              <div
-                key={suggestion._id}
-                className="cursor-pointer hover:bg-gray-200 p-2"
-                onClick={() => {
-                  setSearchTerm(suggestion.title);
-                  setIsDropdownVisible(false);
-                  handleRestaurantChange(suggestion._id);
-                }}
-              >
-                {suggestion.title}
-              </div>
-            ))}
-          </div>
+          <DropdownComponent
+            suggestions={filteredSuggestions}
+            handleRestaurantChange={handleRestaurantChange}
+            setSearchTerm={setSearchTerm}
+          />
         )}
       </div>
-
       <input type="hidden" value={restaurantIdentifier} />
-
-      <button onClick={handleAddRestaurant} className="bg-blue-500 text-white p-2 rounded">
-        Add Restaurant
-      </button>
+      <AddRestaurantButton handleAddRestaurant={handleAddRestaurant} />
     </div>
   );
 }
