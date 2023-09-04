@@ -11,7 +11,7 @@ contract FoodWars {
 
     Restaurant[] public restaurants;
     address payable public contractAuthor;
-    uint256 constant authorFeePercentage = 5; // Constant for fixed fee percentage.
+    uint256 constant authorFeePercentage = 5; // 5%
 
     // Common MetaMask/Token functions
     string public constant name = "FoodWars";
@@ -42,18 +42,29 @@ contract FoodWars {
         emit RestaurantAdded(restaurants.length - 1, _name, _identifier, msg.sender);
     }
 
-    function tipRestaurant(uint _restaurantId) external payable {
-        require(_restaurantId < restaurants.length, "Restaurant not found");
+    function tipRestaurant(string memory _identifier) external payable {
+    int256 restaurantIndex = findRestaurantIndexByIdentifier(_identifier);
+    require(restaurantIndex != -1, "Invalid restaurant identifier");
+    
+    uint256 authorFee = (msg.value * authorFeePercentage) / 100;
+    uint256 tipAmount = msg.value - authorFee;
 
-        uint256 authorFee = (msg.value * authorFeePercentage) / 100;
-        uint256 tipAmount = msg.value - authorFee;
+    restaurants[uint(restaurantIndex)].totalTips += tipAmount;
+    contractAuthor.transfer(authorFee);
+    restaurants[uint(restaurantIndex)].owner.transfer(tipAmount);
 
-        restaurants[_restaurantId].totalTips += tipAmount;
-        contractAuthor.transfer(authorFee);
-        restaurants[_restaurantId].owner.transfer(tipAmount);
+    emit Tipped(uint(restaurantIndex), tipAmount, authorFee);
+}
 
-        emit Tipped(_restaurantId, tipAmount, authorFee);
+    function findRestaurantIndexByIdentifier(string memory _identifier) internal view returns (int256) {
+    for(uint i = 0; i < restaurants.length; i++) {
+        if (keccak256(abi.encodePacked(restaurants[i].identifier)) == keccak256(abi.encodePacked(_identifier))) {
+            return int(i);
+        }
     }
+    return -1;
+}
+
 
     function getAllRestaurants() external view returns (Restaurant[] memory) {
         return restaurants;

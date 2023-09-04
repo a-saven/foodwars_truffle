@@ -45,7 +45,7 @@ export async function Restaurants() {
           </div>
           <div className="m-4">{item.totalTips}</div>
           <div>
-            <Link href={`/tip/${item.rankId}`}>
+            <Link href={`/tip/${item._id}`}>
               <button className="bg-amber-500 text-white p-2 rounded-md ml-1">TIP</button>
             </Link>
           </div>

@@ -4,7 +4,7 @@ import { parseEther } from "ethers";
 import { useEthers } from "@/source/utils/useEthers";
 import { getContract } from "@/source/utils/contract";
 
-function TipInner({ restaurantId, signer }: { restaurantId: number; signer: any }) {
+function TipInner({ restaurantId, signer }: { restaurantId: string; signer: any }) {
   const [tipAmount, setTipAmount] = useState<string>("");
 
   const contract = getContract(signer);
@@ -21,7 +21,7 @@ function TipInner({ restaurantId, signer }: { restaurantId: number; signer: any 
     };
   }, [contract]);
 
-  const handleTip = async (restaurantId: number) => {
+  const handleTip = async (restaurantId: string) => {
     try {
       const amount = parseEther(tipAmount);
       const tx = await contract.tipRestaurant(restaurantId, { value: amount });
@@ -54,7 +54,7 @@ function TipInner({ restaurantId, signer }: { restaurantId: number; signer: any 
   );
 }
 
-export function Tip(props: { restaurantId: number }) {
+export function Tip(props: { restaurantId: string }) {
   const { signer } = useEthers();
 
   if (!signer) return null;
