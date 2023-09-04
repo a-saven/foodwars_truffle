@@ -19,6 +19,12 @@ In second terminal run:
 yarn && yarn dev YouContractName
 ```
 
+For tests run:
+
+```shell
+npx hardhat test --parallel
+```
+
 ## What's a catch?
 
 Write contract in hardhat/contracts/YourContractName.sol
