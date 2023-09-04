@@ -1,16 +1,18 @@
 import { ethers } from "hardhat";
 
-async function main(contractName: string): Promise<string> {
-  const contract = await ethers.deployContract("FoodWars");
+const name = "FoodWars";
+
+async function main(): Promise<string> {
+  const contract = await ethers.deployContract(name);
 
   await contract.waitForDeployment();
   const address = await contract.getAddress();
 
-  console.log(`${contractName} deployed to ${address}.`);
+  console.log(`${name} deployed to ${address}.`);
   return address;
 }
-const contractName = process.argv[2];
-main(contractName)
+
+main()
   .then((address) => {
     console.log(address); // This will print the address to stdout
   })

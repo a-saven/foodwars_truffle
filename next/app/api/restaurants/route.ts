@@ -17,21 +17,19 @@ export async function GET() {
     const { provider } = await initializeEthers();
 
     const contractInstance = new Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
-    const count = await contractInstance.restaurantsCount();
-    const numberCount = Number(count);
 
-    const fetchedRestaurants = [];
-    for (let i = 1; i <= numberCount; i++) {
-      const restaurant = await contractInstance.restaurants(i);
-      fetchedRestaurants.push({
-        id: i,
-        name: restaurant.name,
-        identifier: restaurant.identifier,
-        owner: restaurant.owner,
-        totalTips: weiToEth(Number(restaurant.totalTips)),
-      });
-    }
-    fetchedRestaurants.sort((a, b) => Number(b.totalTips) - Number(a.totalTips));
+    // Directly fetch all restaurants
+    const restaurantsArray = await contractInstance.getAllRestaurants();
+
+    const fetchedRestaurants = restaurantsArray.map((restaurant: any, index: any) => ({
+      id: index + 1,
+      name: restaurant.name,
+      identifier: restaurant.identifier,
+      owner: restaurant.owner,
+      totalTips: weiToEth(Number(restaurant.totalTips)),
+    }));
+
+    fetchedRestaurants.sort((a: any, b: any) => Number(b.totalTips) - Number(a.totalTips));
     return NextResponse.json({ data: fetchedRestaurants }, { status: 200 });
   } catch (error) {
     console.log(error);

@@ -14,8 +14,6 @@ export default config;
 task("dev", "Compiles, deploys, and updates using the localhost network")
   .addParam("contract", "Contract name")
   .setAction(async ({ contract }, hre) => {
-    // Set the network to localhost
-    hre.network.name = "localhost";
 
     // Compile the contract
     await hre.run("compile");
@@ -34,5 +32,7 @@ task("dev", "Compiles, deploys, and updates using the localhost network")
     const contractAddressPath = path.join(__dirname, "..", "next", "contracts", `ContractAddress.json`);
     fs.writeFileSync(contractAddressPath, JSON.stringify({ address }));
 
-    console.log(`Tasks completed for ${contract} on localhost. Deployed to ${address} and updated in the Next.js app.`);
+    console.log(
+      `Tasks completed for ${contract} on ${hre.network.name}. Deployed to ${address} and updated in the Next.js app.`
+    );
   });

@@ -12,9 +12,9 @@ async function fetchAndMergeData(): Promise<MergedRestaurant[]> {
   ]);
 
   return restaurantDocs
-    .filter((doc) => blockchainRankings.some((rank) => rank.identifier === doc._id))
+    .filter((doc) => blockchainRankings?.some((rank) => rank.identifier === doc._id))
     .map((doc): MergedRestaurant => {
-      const matchedRank = blockchainRankings.find((rank) => rank.identifier === doc._id);
+      const matchedRank = blockchainRankings?.find((rank) => rank.identifier === doc._id);
 
       if (!matchedRank) {
         throw new Error(`No matching rank found for restaurant with id ${doc._id}`);
